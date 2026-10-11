@@ -1,0 +1,22 @@
+baseURL = 'https://daozhanglv.github.io/'
+locale = 'zh-CN'
+defaultContentLanguage = 'zh'
+title = 'missing'
+hasCJKLanguage = true
+enableRobotsTXT = true
+[pagination]
+  pagerSize = 8
+[params]
+  author = 'daozhanglv'
+  description = '记录技术、问题与思考。'
+  github = 'https://github.com/daozhanglv'
+[taxonomies]
+  tag = 'tags'
+[markup.goldmark.renderer]
+  unsafe = false
+[markup.highlight]
+  style = 'github'
+  lineNos = false
+[markup.tableOfContents]
+  startLevel = 2
+  endLevel = 3
