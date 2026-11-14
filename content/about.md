@@ -2,10 +2,6 @@
 title: About
 description: A tech blog by daozhanglv.
 ---
-## Why "missing"
-
-Learning usually starts with a missing answer. This blog keeps the process of finding it.
-
 ## What I write about
 
 - Projects I build: why, how they are designed, what went wrong
