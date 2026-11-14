@@ -1,14 +1,15 @@
 baseURL = 'https://daozhanglv.github.io/'
-locale = 'zh-CN'
-defaultContentLanguage = 'zh'
+locale = 'en'
+defaultContentLanguage = 'en'
 title = 'missing'
-hasCJKLanguage = true
+titleCaseStyle = 'none'
+hasCJKLanguage = false
 enableRobotsTXT = true
 [pagination]
   pagerSize = 8
 [params]
   author = 'daozhanglv'
-  description = '记录技术、问题与思考。'
+  description = 'Notes on projects, tools and problems.'
   github = 'https://github.com/daozhanglv'
 [taxonomies]
   tag = 'tags'
