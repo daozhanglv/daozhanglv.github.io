@@ -8,14 +8,17 @@ description: 这里是 daozhanglv 的技术博客。
 
 ## 这里会写什么
 
+- 我在做的项目：为什么做、怎么设计、踩过哪些坑
 - 系统与工具的使用笔记
 - 编程中的问题与解决思路
-- 值得长期保存的技术资料
+
+## 正在做的项目
+
+- [mac-autosync](https://github.com/daozhanglv/mac-autosync)：每晚自动把 Mac 的配置文件备份到 Git 仓库的模板。
+- [WortSchatz](https://github.com/daozhanglv/wortschatz)：德语词汇训练工具，从德语文本中提取生词，并按间隔重复安排复习。
+
+项目文章用英文写，其余笔记用中文。
 
 ## 联系
 
 你可以在 [GitHub](https://github.com/daozhanglv) 找到我。
-
----
-
-这段介绍是可修改的起始文案，你可以在 `content/about.md` 写下自己的经历与兴趣。

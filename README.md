@@ -1,6 +1,31 @@
 # missing
 
-为 daozhanglv 准备的个人技术博客。Hugo + GitHub Pages，原生模板，无第三方主题、前端构建依赖、跟踪脚本。米白色、黑色细线与蓝色强调，参考 ArchLinuxStudio 的编辑式排版，重新实现为个人博客。
+daozhanglv 的个人技术博客：<https://daozhanglv.github.io/>
+
+记录我在做的项目和学习过程中的笔记。Hugo + GitHub Pages，原生模板，无第三方主题、前端构建依赖、跟踪脚本。
+
+## 内容
+
+| 类型 | 语言 | 说明 |
+|---|---|---|
+| 项目文章 | 英文 | 每个项目到达一个里程碑时写一篇：为什么做、怎么设计、还差什么 |
+| 学习笔记 | 中文 | 系统、工具与编程问题的记录 |
+
+目前写到的项目：
+
+- [mac-autosync](https://github.com/daozhanglv/mac-autosync)：每晚自动把 Mac 的配置文件备份到 Git 仓库的模板。文章：[mac-autosync: a Mac config backup I never have to think about](https://daozhanglv.github.io/posts/mac-autosync/)
+- [WortSchatz](https://github.com/daozhanglv/wortschatz)：德语词汇训练工具（文章待写）
+
+## 写文章
+
+```bash
+hugo new content posts/my-note.md
+hugo server -D
+```
+
+修改 `content/posts/my-note.md`，填写标题、description、tags 和正文。发布前设置 `draft: false`；日期在未来的文章不会输出。
+
+推送到 `main` 后，GitHub Actions（`.github/workflows/hugo.yaml`）自动构建并部署，一两分钟后上线。部署结果可在仓库的 Actions 页面查看。
 
 ## 本地运行
 
@@ -12,48 +37,18 @@ hugo server -D
 
 打开 http://localhost:1313/。正式构建使用 `hugo --minify`，生成目录为 `public/`，无需提交该目录。
 
-## 首次部署到 GitHub Pages
+## 目录结构
 
-1. 登录 https://github.com/daozhanglv，创建名为 `daozhanglv.github.io` 的公开仓库。不要预先添加 README，方便直接推送。
-2. 把本目录的全部文件（包含隐藏的 `.github/` 和 `.gitignore`）提交到仓库：
-
-```bash
-git init -b main
-git add .
-git commit -m "Create missing Hugo blog"
-git remote add origin https://github.com/daozhanglv/daozhanglv.github.io.git
-git push -u origin main
-```
-
-3. 在仓库 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**。
-4. 在 **Actions → Build and deploy Hugo → Run workflow** 手动运行一次（如果首次 push 已成功部署，无需重复）。
-5. 部署成功后访问 https://daozhanglv.github.io/。
-
-如果这个仓库已存在，请先备份并检查原有内容，不要直接覆盖。也可以使用其他仓库名，访问地址将变为 `https://daozhanglv.github.io/仓库名/`；修改 `hugo.toml` 的 `baseURL`。Actions 构建会自动使用 Pages 返回的实际地址，导航和样式也支持子路径。
-
-自动部署参照 Hugo 官方指南：https://gohugo.io/host-and-deploy/deploy-to-github-pages/
-
-## 写文章
-
-```bash
-hugo new content posts/my-note.md
-hugo server -D
-```
-
-修改 `content/posts/my-note.md`，填写标题、description、tags 和正文。发布前设置 `draft: false`；未来日期的文章默认不会输出。推送到 main 后自动重新部署。
-
-三篇起始文章均标记为「示例文章」，不是作者已发表的个人经历。正式上线时删除或替换它们，自己的新文章无需添加 `example: true`。
-
-## 修改个人信息
-
+- `content/posts/`：文章，一篇一个 Markdown 文件。
+- `content/about.md`：关于页。
 - `hugo.toml`：博客名、作者、说明、GitHub 链接与站点地址。
-- `content/about.md`：个人介绍。
-- `layouts/index.html`：首页介绍与主标题。
+- `layouts/`：页面模板；`layouts/index.html` 是首页。
 - `static/css/main.css`：颜色与排版。
 - `static/favicon.svg`：浏览器图标。
+- `archetypes/default.md`：新文章的模板。
 
 功能：文章分页、标签索引、年份归档、阅读目录、相邻文章导航、RSS、sitemap、robots.txt、404 页、响应式布局、代码高亮。
 
 ## 自定义域名
 
-在仓库 Pages 设置中配置域名，按 GitHub 提示添加 DNS 记录，再修改 `baseURL`。本项目没有预设自定义域名或 CNAME。
+目前使用默认地址，没有配置自定义域名或 CNAME。需要时在仓库 Pages 设置中配置域名，按 GitHub 提示添加 DNS 记录，再修改 `hugo.toml` 的 `baseURL`。
