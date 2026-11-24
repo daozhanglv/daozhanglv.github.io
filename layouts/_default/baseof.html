@@ -1,2 +1,84 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{{ if not .IsHome }}{{ .Title }} · {{ end }}{{ .Site.Title }}</title><meta name="description" content="{{ .Description | default .Site.Params.description }}"><link rel="canonical" href="{{ .Permalink }}"><link rel="stylesheet" href="{{ "css/main.css" | relURL }}"><link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">{{ with .OutputFormats.Get "rss" }}<link rel="alternate" type="application/rss+xml" title="missing" href="{{ .Permalink }}">{{ end }}</head><body><a class="skip" href="#main">Skip to content</a><header class="header"><a class="brand" href="{{ .Site.Home.RelPermalink }}">missing<span>/</span></a><nav aria-label="Main">{{ $page := . }}{{ range slice (dict "name" "Home" "path" "" "num" "01") (dict "name" "Posts" "path" "posts/" "num" "02") (dict "name" "Archive" "path" "archives/" "num" "03") (dict "name" "About" "path" "about/" "num" "04") }}<a href="{{ .path | relURL }}" {{ if eq $page.RelPermalink (.path | relURL) }}aria-current="page"{{ end }}><small>{{ .num }}</small>{{ .name }}</a>{{ end }}</nav></header><main id="main" class="shell">{{ block "main" . }}{{ end }}</main><footer class="shell footer"><div><a class="brand" href="{{ .Site.Home.RelPermalink }}">missing<span>/</span></a></div><div><a href="{{ .Site.Params.github }}">GitHub ↗</a><a href="{{ "index.xml" | relURL }}">RSS ↗</a><a href="{{ "tags/" | relURL }}">Tags →</a><p>© {{ now.Year }} {{ .Site.Params.author }} · Built with Hugo</p></div></footer></body></html>
+<html lang="{{ .Site.Language.Lang | default "en" }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {{- $title := .Site.Title }}
+  {{- if not .IsHome }}
+    {{- $title = printf "%s · %s" .Title .Site.Title }}
+  {{- end }}
+  {{- $description := .Description | default .Site.Params.description }}
+  <title>{{ $title }}</title>
+  <meta name="description" content="{{ $description }}">
+  <link rel="canonical" href="{{ .Permalink }}">
+
+  {{- /* Open Graph & Twitter Card */ -}}
+  <meta property="og:title" content="{{ $title }}">
+  <meta property="og:description" content="{{ $description }}">
+  <meta property="og:type" content="{{ if and .IsPage (eq .Section "posts") }}article{{ else }}website{{ end }}">
+  <meta property="og:url" content="{{ .Permalink }}">
+  <meta property="og:site_name" content="{{ .Site.Title }}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ $title }}">
+  <meta name="twitter:description" content="{{ $description }}">
+
+  {{- $css := resources.Get "css/main.css" | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+  <link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
+  {{- with .OutputFormats.Get "rss" }}
+  <link rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }}" href="{{ .Permalink }}">
+  {{- end }}
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="header">
+    <a class="brand" href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}<span>/</span></a>
+    <nav aria-label="Main">
+      {{- $page := . }}
+      {{- $nav := slice
+        (dict "name" "Home" "path" "" "num" "01" "section" "")
+        (dict "name" "Projects" "path" "projects/" "num" "02" "section" "projects")
+        (dict "name" "Posts" "path" "posts/" "num" "03" "section" "posts")
+        (dict "name" "Archive" "path" "archives/" "num" "04" "section" "archives")
+        (dict "name" "About" "path" "about/" "num" "05" "section" "about")
+      }}
+      {{- range $nav }}
+        {{- $url := .path | relURL }}
+        {{- $active := false }}
+        {{- if eq .path "" }}
+          {{- $active = $page.IsHome }}
+        {{- else if eq .section "posts" }}
+          {{- $active = eq $page.Section "posts" }}
+        {{- else }}
+          {{- $active = eq $page.RelPermalink $url }}
+        {{- end }}
+        <a href="{{ $url }}"{{ if $active }} aria-current="page"{{ end }}>
+          <small>{{ .num }}</small>{{ .name }}
+        </a>
+      {{- end }}
+    </nav>
+  </header>
+
+  <main id="main" class="shell">
+    {{ block "main" . }}{{ end }}
+  </main>
+
+  <footer class="shell footer">
+    <div>
+      <a class="brand" href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}<span>/</span></a>
+    </div>
+    <div>
+      {{- with .Site.Params.email }}
+      <a href="mailto:{{ . }}">Email ↗</a>
+      {{- end }}
+      {{- with .Site.Params.github }}
+      <a href="{{ . }}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      {{- end }}
+      <a href="{{ "index.xml" | relURL }}">RSS ↗</a>
+      <a href="{{ "tags/" | relURL }}">Tags →</a>
+      <p>© {{ now.Year }} {{ .Site.Params.author }} · Built with Hugo</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,1 +1,32 @@
-{{ define "main" }}<div class="page-heading"><h1>{{ .Title }}</h1>{{ with .Description }}<p>{{ . }}</p>{{ end }}</div>{{ if eq .Kind "taxonomy" }}<div class="tag-index">{{ range .Data.Terms.Alphabetical }}<a href="{{ .Page.RelPermalink }}">{{ .Page.Title }} <small>{{ .Count }}</small></a>{{ end }}</div>{{ else }}{{ $pager := .Paginate .Pages }}{{ range $pager.Pages }}{{ partial "post-row.html" . }}{{ end }}{{ if gt $pager.TotalPages 1 }}<nav class="pagination" aria-label="Pagination">{{ with $pager.Prev }}<a href="{{ .URL }}">← Previous</a>{{ end }}<span>{{ $pager.PageNumber }} / {{ $pager.TotalPages }}</span>{{ with $pager.Next }}<a href="{{ .URL }}">Next →</a>{{ end }}</nav>{{ end }}{{ end }}{{ end }}
+{{ define "main" }}
+  <div class="page-heading">
+    <h1>{{ .Title }}</h1>
+    {{- with .Description }}
+    <p>{{ . }}</p>
+    {{- end }}
+  </div>
+
+  {{- if eq .Kind "taxonomy" }}
+  <div class="tag-index">
+    {{- range .Data.Terms.Alphabetical }}
+    <a href="{{ .Page.RelPermalink }}">{{ .Page.Title }} <small>{{ .Count }}</small></a>
+    {{- end }}
+  </div>
+  {{- else }}
+    {{- $pager := .Paginate .Pages }}
+    {{- range $pager.Pages }}
+      {{ partial "post-row.html" . }}
+    {{- end }}
+    {{- if gt $pager.TotalPages 1 }}
+    <nav class="pagination" aria-label="Pagination">
+      {{- with $pager.Prev }}
+      <a href="{{ .URL }}">← Previous</a>
+      {{- end }}
+      <span>{{ $pager.PageNumber }} / {{ $pager.TotalPages }}</span>
+      {{- with $pager.Next }}
+      <a href="{{ .URL }}">Next →</a>
+      {{- end }}
+    </nav>
+    {{- end }}
+  {{- end }}
+{{ end }}

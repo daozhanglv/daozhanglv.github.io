@@ -9,8 +9,10 @@ enableRobotsTXT = true
   pagerSize = 8
 [params]
   author = 'daozhanglv'
-  description = 'Notes on projects, tools and problems.'
+  role = 'Backend / Java Software Engineer'
+  description = 'Backend & Java software engineer. Selected projects, system design notes, and engineering write-ups.'
   github = 'https://github.com/daozhanglv'
+  email = 'boki1982014612@gmail.com'
 [taxonomies]
   tag = 'tags'
 [markup.goldmark.renderer]

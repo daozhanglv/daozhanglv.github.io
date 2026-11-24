@@ -1,1 +1,60 @@
-{{ define "main" }}<a class="back" href="{{ "posts/" | relURL }}">← All posts</a><article><header class="page-heading"><div class="tags">{{ range .GetTerms "tags" }}<a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}</div><h1>{{ .Title }}</h1><p>{{ .Description }}</p><div class="eyebrow">{{ .Date.Format "2006.01.02" }} · {{ .Site.Params.author }} · {{ .ReadingTime }} min read</div></header><div class="reading-layout"><div class="prose">{{ .Content }}</div>{{ if gt (len .TableOfContents) 32 }}<aside class="toc"><span class="eyebrow">ON THIS PAGE</span>{{ .TableOfContents }}</aside>{{ end }}</div></article><nav class="post-navigation" aria-label="Adjacent posts">{{ with .PrevInSection }}<a href="{{ .RelPermalink }}">← {{ .Title }}</a>{{ end }}{{ with .NextInSection }}<a href="{{ .RelPermalink }}">{{ .Title }} →</a>{{ end }}</nav>{{ end }}
+{{ define "main" }}
+  <a class="back" href="{{ "posts/" | relURL }}">← All posts</a>
+
+  <article>
+    <header class="page-heading">
+      <div class="tags">
+        {{- range .GetTerms "tags" }}
+        <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+        {{- end }}
+      </div>
+      <h1>{{ .Title }}</h1>
+      {{- with .Description }}
+      <p>{{ . }}</p>
+      {{- end }}
+      <div class="eyebrow">{{ .Date.Format "2006.01.02" }} · {{ .Site.Params.author }} · {{ .ReadingTime }} min read</div>
+    </header>
+
+    <div class="reading-layout">
+      <div class="prose">{{ .Content }}</div>
+      {{- if gt (len .TableOfContents) 32 }}
+      <aside class="toc">
+        <span class="eyebrow">On this page</span>
+        {{ .TableOfContents }}
+      </aside>
+      {{- end }}
+    </div>
+  </article>
+
+  <nav class="post-navigation" aria-label="Adjacent posts">
+    {{- with .PrevInSection }}
+    <a href="{{ .RelPermalink }}">← {{ .Title }}</a>
+    {{- end }}
+    {{- with .NextInSection }}
+    <a href="{{ .RelPermalink }}">{{ .Title }} →</a>
+    {{- end }}
+  </nav>
+
+  <script>
+    document.querySelectorAll('.prose pre').forEach(function (pre) {
+      var wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(pre);
+
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'copy-btn';
+      btn.textContent = 'Copy';
+      btn.addEventListener('click', function () {
+        var code = pre.querySelector('code');
+        var text = code ? code.innerText : pre.innerText;
+        navigator.clipboard.writeText(text).then(function () {
+          btn.textContent = 'Copied';
+          setTimeout(function () { btn.textContent = 'Copy'; }, 1500);
+        });
+      });
+      wrap.appendChild(btn);
+    });
+  </script>
+{{ end }}

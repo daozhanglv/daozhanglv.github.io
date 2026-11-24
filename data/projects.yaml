@@ -1,0 +1,32 @@
+- name: WortSchatz
+  tagline: A German vocabulary trainer backend that extracts candidate words from real articles and schedules reviews with spaced repetition.
+  status: In Progress
+  featured: true
+  stack:
+    - Java 21
+    - Spring Boot 4
+    - PostgreSQL 17
+    - Testcontainers
+    - GitHub Actions
+  highlights:
+    - Decoupled HTTP contracts (Java records + Bean Validation + ProblemDetail) from JPA persistence entities.
+    - Modeled domain-specific German grammar attributes (part of speech, grammatical gender, plural forms, source sentence).
+    - End-to-end integration tests running against a real PostgreSQL container on every push via GitHub Actions.
+  repo: https://github.com/daozhanglv/wortschatz
+  post: /posts/wortschatz-1-data-foundation/
+
+- name: mac-autosync
+  tagline: Zero-touch nightly Mac config and Homebrew backup to a private Git repo with two-layer secret prevention.
+  status: Active
+  featured: true
+  stack:
+    - Bash 3.2
+    - macOS launchd
+    - gitleaks
+    - Homebrew
+  highlights:
+    - Written in plain Bash 3.2 (~400 lines) with no extra runtime, compatible with a fresh macOS install.
+    - Two-layer secret blocking combining a hard-coded sensitive path denylist and pre-commit gitleaks scanning.
+    - One-command restore flow (`install.sh --restore`) for dotfiles and Homebrew packages on a new machine.
+  repo: https://github.com/daozhanglv/mac-autosync
+  post: /posts/mac-autosync/

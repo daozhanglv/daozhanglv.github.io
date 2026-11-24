@@ -40,14 +40,16 @@ hugo server -D
 ## 目录结构
 
 - `content/posts/`：文章，一篇一个 Markdown 文件。
+- `content/projects.md`：作品集页（数据来自 `data/projects.yaml`）。
 - `content/about.md`：关于页。
-- `hugo.toml`：博客名、作者、说明、GitHub 链接与站点地址。
-- `layouts/`：页面模板；`layouts/index.html` 是首页。
-- `static/css/main.css`：颜色与排版。
+- `data/projects.yaml`：项目展示数据（首页 Selected Projects 与 `/projects/` 页面共用）。
+- `hugo.toml`：博客名、作者、定位、邮箱、GitHub 链接与站点地址。
+- `layouts/`：页面模板；`layouts/index.html` 是首页，`layouts/projects.html` 是作品集页。
+- `assets/css/main.css`：颜色与排版（通过 Hugo Pipes 自动压缩并生成 fingerprint）。
 - `static/favicon.svg`：浏览器图标。
 - `archetypes/default.md`：新文章的模板。
 
-功能：文章分页、标签索引、年份归档、阅读目录、相邻文章导航、RSS、sitemap、robots.txt、404 页、响应式布局、代码高亮。
+功能：作品集展示、文章分页、标签索引、年份归档、阅读目录、代码块一键复制、相邻文章导航、Open Graph / Twitter 元标签、RSS、sitemap、robots.txt、404 页、响应式布局、代码高亮。
 
 ## 自定义域名
 

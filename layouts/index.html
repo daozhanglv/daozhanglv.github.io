@@ -1,1 +1,70 @@
-{{ define "main" }}<div class="page-heading"><h1>{{ .Site.Title }}</h1><p>Tech notes by {{ .Site.Params.author }}: projects I build and what I learn along the way.</p></div><section class="latest"><div class="section-heading" style="border-top:0"><div><h2>Latest posts</h2></div><a href="{{ "posts/" | relURL }}">All posts ↗</a></div>{{ range first 4 (where .Site.RegularPages "Section" "posts") }}{{ partial "post-row.html" . }}{{ end }}</section>{{ end }}
+{{ define "main" }}
+  <section class="page-heading">
+    <div class="eyebrow">{{ .Site.Params.author }} · {{ .Site.Params.role }}</div>
+    <h1>{{ .Site.Title }}</h1>
+    <p>
+      I build backend services in Java &amp; Spring Boot, developer tooling, and write engineering notes on how they are designed and tested.
+    </p>
+    <div class="home-actions">
+      <a class="button" href="{{ "projects/" | relURL }}">View projects <span>→</span></a>
+      {{- with .Site.Params.github }}
+      <a class="text-link" href="{{ . }}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      {{- end }}
+      {{- with .Site.Params.email }}
+      <a class="text-link" href="mailto:{{ . }}">Email ↗</a>
+      {{- end }}
+      <a class="text-link" href="{{ "about/" | relURL }}">About →</a>
+    </div>
+  </section>
+
+  {{- with hugo.Data.projects }}
+  <section class="projects">
+    <div class="section-heading section-heading--flush">
+      <div>
+        <h2>Selected projects</h2>
+      </div>
+      <a href="{{ "projects/" | relURL }}">All projects ↗</a>
+    </div>
+    <div class="project-grid">
+      {{- range where . "featured" true }}
+      <article class="project-card">
+        <div class="project-card__head">
+          <h3>{{ .name }}</h3>
+          {{- with .status }}
+          <span class="project-status">{{ . }}</span>
+          {{- end }}
+        </div>
+        <p>{{ .tagline }}</p>
+        {{- with .stack }}
+        <div class="tags">
+          {{- range . }}
+          <span>{{ . }}</span>
+          {{- end }}
+        </div>
+        {{- end }}
+        <div class="project-links">
+          {{- with .post }}
+          <a href="{{ . | relURL }}">Write-up →</a>
+          {{- end }}
+          {{- with .repo }}
+          <a href="{{ . }}" target="_blank" rel="noopener noreferrer">Source ↗</a>
+          {{- end }}
+        </div>
+      </article>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+
+  <section class="latest">
+    <div class="section-heading">
+      <div>
+        <h2>Latest posts</h2>
+      </div>
+      <a href="{{ "posts/" | relURL }}">All posts ↗</a>
+    </div>
+    {{- range first 4 (where .Site.RegularPages "Section" "posts") }}
+      {{ partial "post-row.html" . }}
+    {{- end }}
+  </section>
+{{ end }}

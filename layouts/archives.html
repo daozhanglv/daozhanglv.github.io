@@ -1,1 +1,20 @@
-{{ define "main" }}<div class="page-heading"><h1>Archive</h1></div>{{ range (where .Site.RegularPages "Section" "posts").GroupByDate "2006" }}<section class="archive"><h2>{{ .Key }}</h2><div>{{ range .Pages }}<a href="{{ .RelPermalink }}"><time>{{ .Date.Format "01.02" }}</time><span>{{ .Title }}</span><span>↗</span></a>{{ end }}</div></section>{{ end }}{{ end }}
+{{ define "main" }}
+  <div class="page-heading">
+    <h1>Archive</h1>
+  </div>
+
+  {{- range (where .Site.RegularPages "Section" "posts").GroupByDate "2006" }}
+  <section class="archive">
+    <h2>{{ .Key }}</h2>
+    <div>
+      {{- range .Pages }}
+      <a href="{{ .RelPermalink }}">
+        <time>{{ .Date.Format "01.02" }}</time>
+        <span>{{ .Title }}</span>
+        <span>↗</span>
+      </a>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+{{ end }}

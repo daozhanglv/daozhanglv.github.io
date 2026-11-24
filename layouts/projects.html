@@ -1,0 +1,48 @@
+{{ define "main" }}
+  <div class="page-heading">
+    <div class="eyebrow">Portfolio</div>
+    <h1>{{ .Title }}</h1>
+    {{- with .Description }}
+    <p>{{ . }}</p>
+    {{- end }}
+  </div>
+
+  <section class="project-list">
+    {{- range hugo.Data.projects }}
+    <article class="project-item">
+      <div class="project-item__meta">
+        <h2>{{ .name }}</h2>
+        {{- with .status }}
+        <span class="project-status">{{ . }}</span>
+        {{- end }}
+        {{- with .stack }}
+        <div class="tags">
+          {{- range . }}
+          <span>{{ . }}</span>
+          {{- end }}
+        </div>
+        {{- end }}
+      </div>
+
+      <div class="project-item__body">
+        <p>{{ .tagline }}</p>
+        {{- with .highlights }}
+        <ul class="project-highlights">
+          {{- range . }}
+          <li>{{ . | markdownify }}</li>
+          {{- end }}
+        </ul>
+        {{- end }}
+        <div class="project-links">
+          {{- with .post }}
+          <a href="{{ . | relURL }}">Read write-up →</a>
+          {{- end }}
+          {{- with .repo }}
+          <a href="{{ . }}" target="_blank" rel="noopener noreferrer">View source on GitHub ↗</a>
+          {{- end }}
+        </div>
+      </div>
+    </article>
+    {{- end }}
+  </section>
+{{ end }}
