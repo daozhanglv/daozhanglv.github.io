@@ -14,7 +14,7 @@ daozhanglv 的个人技术博客：<https://daozhanglv.github.io/>
 目前写到的项目：
 
 - [mac-autosync](https://github.com/daozhanglv/mac-autosync)：每晚自动把 Mac 的配置文件备份到 Git 仓库的模板。文章：[mac-autosync: a Mac config backup I never have to think about](https://daozhanglv.github.io/posts/mac-autosync/)
-- [WortSchatz](https://github.com/daozhanglv/wortschatz)：德语词汇训练工具（文章待写）
+- [WortSchatz](https://github.com/daozhanglv/wortschatz)：德语词汇训练工具。文章：[WortSchatz (1): building the data foundation with Spring Boot and PostgreSQL](https://daozhanglv.github.io/posts/wortschatz-1-data-foundation/)
 
 ## 写文章
 

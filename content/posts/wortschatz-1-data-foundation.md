@@ -1,7 +1,7 @@
 ---
 title: 'WortSchatz (1): building the data foundation with Spring Boot and PostgreSQL'
-date: 2026-11-24T12:09:00+08:00
-draft: true
+date: 2026-11-24T12:20:40+08:00
+draft: false
 description: 'Setting up the Spring Boot 4 backend, PostgreSQL schema, input validation, Testcontainers integration test, and GitHub Actions CI for my German vocabulary trainer.'
 tags: ['Java', 'Spring Boot', 'PostgreSQL', 'Projects']
 ---
