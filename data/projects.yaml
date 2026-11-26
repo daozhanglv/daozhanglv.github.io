@@ -1,6 +1,6 @@
 - id: wortschatz
   name: WortSchatz
-  tagline: A German vocabulary trainer backend that extracts candidate words from real articles and schedules reviews with spaced repetition.
+  tagline: A Java backend for learning German vocabulary from articles. The first milestone delivers REST APIs for words and source articles, backed by PostgreSQL.
   status: In Progress
   featured: true
   stack:
@@ -10,20 +10,26 @@
     - Testcontainers
     - GitHub Actions
   diagram: /diagrams/wortschatz-arch.svg
-  diagram_alt: Layered Spring Boot architecture from REST controllers with Java record DTOs through domain services and JPA into PostgreSQL 17, verified with Testcontainers in GitHub Actions.
+  diagram_alt: Layered Spring Boot architecture from REST controllers with Java record DTOs through domain services and JPA into PostgreSQL 17, with Testcontainers used in CI.
+  details: |
+    **API example.** Send `{"lemma":"Haus","partOfSpeech":"NOUN"}` as JSON to `POST /api/words`. Leaving out `meaning` returns `400 Bad Request` with a `ProblemDetail` response that identifies `errors.meaning`. See the [request validation](https://github.com/daozhanglv/wortschatz/blob/c0005a93dcd1639beb7d325e67c78f9492455590/src/main/java/io/github/daozhanglv/wortschatz/word/CreateWordRequest.java) and [error handler](https://github.com/daozhanglv/wortschatz/blob/c0005a93dcd1639beb7d325e67c78f9492455590/src/main/java/io/github/daozhanglv/wortschatz/common/GlobalExceptionHandler.java).
+
+    **Database test.** The milestone's [Testcontainers integration test](https://github.com/daozhanglv/wortschatz/blob/c0005a93dcd1639beb7d325e67c78f9492455590/src/test/java/io/github/daozhanglv/wortschatz/WortschatzApplicationTests.java) saves an article to PostgreSQL 17 and reads it back in CI.
+
+    **Project progress.** The DeepSeek client uses typed request and response DTOs. Structured vocabulary extraction is in progress, and spaced repetition is planned. See the [project roadmap](https://github.com/daozhanglv/wortschatz/blob/main/ROADMAP.md).
   highlights:
-    - Decoupled HTTP contracts (Java records + Bean Validation + RFC 9457 `ProblemDetail`) from JPA persistence entities to prevent lazy-loading leaks.
+    - Separated HTTP contracts from JPA entities with Java records and aligned request length limits with PostgreSQL columns so oversized input returns `400` with field-level errors.
     - Modeled domain-specific German grammar attributes (`@Enumerated(STRING)` part of speech, grammatical gender, plural forms, and source article context).
-    - End-to-end integration tests running against a real `postgres:17` Testcontainers instance on every push via GitHub Actions.
+    - Added a PostgreSQL 17 persistence test with Testcontainers and wired the test suite into GitHub Actions.
   repo: https://github.com/daozhanglv/wortschatz
   series: /series/wortschatz/
   posts:
-    - label: "Part 1: Data foundation"
+    - label: "API & testing case study"
       url: /posts/wortschatz-1-data-foundation/
 
 - id: mac-autosync
   name: mac-autosync
-  tagline: Zero-touch nightly Mac config and Homebrew backup to a private Git repo with two-layer secret prevention.
+  tagline: Nightly Mac config and Homebrew backups to a private Git repo, with sensitive path exclusions and staged secret scanning.
   status: Active
   featured: true
   stack:
@@ -33,9 +39,11 @@
     - Homebrew
   diagram: /diagrams/mac-autosync-arch.svg
   diagram_alt: Nightly launchd pipeline running Bash 3.2 scripts to snapshot dotfiles and Brewfile, enforce path denylist and gitleaks staged scan, and push to a private Git repository.
+  details: |
+    The [design write-up](/posts/mac-autosync/#status) records simulated tests of backup, push retries, restore, and secret detection. It also identifies clean-install testing on macOS as the next validation step.
   highlights:
-    - Written in portable Bash 3.2 (~400 lines) with no background daemon or extra runtime, compatible with a clean macOS install.
-    - Two-layer pre-commit secret blocking combining a hard-coded sensitive path denylist and staged `gitleaks` scanning so secrets never enter Git history.
+    - Runs scheduled backups with macOS launchd and the system Bash 3.2 (~400 lines).
+    - Excludes sensitive paths on a denylist and aborts commits when `gitleaks` flags staged changes.
     - Safe dry-run check (`install.sh --check`) and one-command restore flow (`install.sh --restore` with `.bak` preservation) for setting up a new Mac.
   repo: https://github.com/daozhanglv/mac-autosync
   posts:

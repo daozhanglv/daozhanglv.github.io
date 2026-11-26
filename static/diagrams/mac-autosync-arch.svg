@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 216" role="img" aria-labelledby="ma-title ma-desc">
   <title id="ma-title">mac-autosync Nightly Backup Pipeline</title>
-  <desc id="ma-desc">Nightly pipeline triggered by macOS launchd running Bash 3.2 scripts to collect dotfiles and Brewfile, block secrets via path denylist and gitleaks staged scan, and push to a private Git repository.</desc>
+  <desc id="ma-desc">Nightly pipeline triggered by macOS launchd running Bash 3.2 scripts to collect dotfiles and Brewfile, exclude sensitive paths, scan staged changes with gitleaks, and push to a private Git repository.</desc>
   <style>
     .bg { fill: #ebe9e1; stroke: #c7c6bc; stroke-width: 1; }
     .box { fill: #f5f4ee; stroke: #171814; stroke-width: 1; }
@@ -40,7 +40,7 @@
   <!-- Stage 3: Secret Guard -->
   <rect class="box-accent" x="368" y="20" width="160" height="106"/>
   <text class="eyebrow" x="380" y="40">03 · SECRET GUARD</text>
-  <text class="title" x="380" y="61">Two-Layer Block</text>
+  <text class="title" x="380" y="61">Pre-commit Checks</text>
   <text class="meta" x="380" y="82">1. Sensitive denylist</text>
   <text class="meta" x="380" y="99">2. gitleaks staged</text>
   <text class="meta" x="380" y="115">Pre-commit gate</text>
@@ -58,8 +58,8 @@
 
   <!-- Cross-cutting bars -->
   <rect class="bar" x="18" y="142" width="332" height="56"/>
-  <text class="eyebrow" x="30" y="161">FAIL-SAFE LEAK POLICY</text>
-  <text class="meta" x="30" y="181">Cancel commit before history + macOS notification</text>
+  <text class="eyebrow" x="30" y="161">WHEN GITLEAKS FLAGS A CHANGE</text>
+  <text class="meta" x="30" y="181">Cancel commit + send macOS notification</text>
 
   <rect class="bar" x="366" y="142" width="336" height="56"/>
   <text class="eyebrow" x="378" y="161">DRY RUN &amp; RESTORE</text>

@@ -13,7 +13,7 @@ This post explains why it exists and the decisions behind it.
 
 Config files such as `.zshrc` and `.gitconfig` change a little at a time, and I never remember to save them. Tools like [chezmoi](https://www.chezmoi.io) solve this well, but they expect you to run a command after every change and push the result yourself. A backup that depends on my memory is a backup I will not have on the day I need it.
 
-So the requirement was short: one Mac, no daily action, and no chance of pushing a password to GitHub by accident.
+The goal was to back up one Mac without daily intervention and reduce the risk of committing credentials by accident.
 
 ## What happens every night
 
@@ -27,20 +27,20 @@ On a new Mac, `bash install.sh --restore` copies the files back and reinstalls e
 
 ## Design decisions
 
-### Plain Bash and launchd, nothing else
+### Bash and launchd for scheduling
 
-The whole tool is five shell scripts, under 400 lines including comments, plus launchd, the scheduler that ships with macOS. There is no daemon and no binary to keep updated. It is written for Bash 3.2, the old version Apple still ships, so it runs on a fresh Mac before anything else is installed.
+The core is five shell scripts, under 400 lines including comments. They use the Bash 3.2 and launchd versions that ship with macOS. Homebrew and gitleaks handle the package inventory and secret scan.
 
 One detail took care: launchd starts jobs with a minimal `PATH`, so a script that works in the terminal can fail at night because it cannot find `brew` or `gitleaks`. The shared `lib/common.sh` adds Homebrew's locations before anything else runs.
 
-### Secrets are blocked twice
+### Two checks before committing
 
-An automatic push is only safe if it cannot leak. There are two layers:
+The backup uses two checks to reduce the risk of accidentally committing credentials:
 
 - A fixed list of paths that are never backed up, even if you list them: SSH private keys, `*.pem`, `.aws/credentials`, `.netrc`, `.npmrc` and similar.
 - A gitleaks scan of every change before it is committed. If it finds something, the commit is cancelled, nothing is pushed, and a macOS notification points to the log.
 
-The order matters. The scan runs on staged changes before the commit, so a secret never enters Git history, not even locally.
+The scan runs before the commit so flagged changes stay out of local Git history. What it detects depends on the scan rules.
 
 ### One direction only
 

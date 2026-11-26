@@ -28,6 +28,11 @@
 
       <div class="project-item__body">
         <p>{{ .tagline }}</p>
+        {{- with .details }}
+        <div class="prose">
+          {{ $.RenderString (dict "display" "block") . }}
+        </div>
+        {{- end }}
         {{- with .diagram }}
         <figure class="project-diagram">
           <img src="{{ . | relURL }}" alt="{{ $proj.diagram_alt | default (printf "%s architecture diagram" $proj.name) }}" width="720" height="216" loading="lazy">
