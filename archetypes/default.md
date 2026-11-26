@@ -4,10 +4,15 @@ date: '{{ .Date }}'
 draft: true
 description: ''
 tags: []
+series: []
 ---
 
-## Problem
+## The problem
 
-## Process
+## What I built
 
-## Conclusion
+## Design decisions
+
+## Issues encountered
+
+## What is next

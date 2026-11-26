@@ -9,7 +9,9 @@
 
   <section class="project-list">
     {{- range hugo.Data.projects }}
-    <article class="project-item">
+    {{- $proj := . }}
+    {{- $id := .id | default (.name | urlize) }}
+    <article id="{{ $id }}" class="project-item">
       <div class="project-item__meta">
         <h2>{{ .name }}</h2>
         {{- with .status }}
@@ -26,6 +28,11 @@
 
       <div class="project-item__body">
         <p>{{ .tagline }}</p>
+        {{- with .diagram }}
+        <figure class="project-diagram">
+          <img src="{{ . | relURL }}" alt="{{ $proj.diagram_alt | default (printf "%s architecture diagram" $proj.name) }}" width="720" height="216" loading="lazy">
+        </figure>
+        {{- end }}
         {{- with .highlights }}
         <ul class="project-highlights">
           {{- range . }}
@@ -34,8 +41,17 @@
         </ul>
         {{- end }}
         <div class="project-links">
-          {{- with .post }}
-          <a href="{{ . | relURL }}">Read write-up →</a>
+          {{- with .posts }}
+            {{- range . }}
+            <a href="{{ .url | relURL }}">{{ .label }} →</a>
+            {{- end }}
+          {{- else }}
+            {{- with .post }}
+            <a href="{{ . | relURL }}">Read write-up →</a>
+            {{- end }}
+          {{- end }}
+          {{- with .series }}
+          <a href="{{ . | relURL }}">Full series →</a>
           {{- end }}
           {{- with .repo }}
           <a href="{{ . }}" target="_blank" rel="noopener noreferrer">View source on GitHub ↗</a>

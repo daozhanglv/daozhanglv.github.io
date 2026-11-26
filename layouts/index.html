@@ -1,14 +1,18 @@
 {{ define "main" }}
   <section class="page-heading">
-    <div class="eyebrow">{{ .Site.Params.author }} · {{ .Site.Params.role }}</div>
-    <h1>{{ .Site.Title }}</h1>
+    <div class="eyebrow">{{ .Site.Params.author }}{{ with .Site.Params.status }} · {{ . }}{{ end }}{{ with .Site.Params.location }} · {{ . }}{{ end }}</div>
+    <h1>{{ .Site.Params.headline | default .Site.Params.role }}</h1>
     <p>
-      I build backend services in Java &amp; Spring Boot, developer tooling, and write engineering notes on how they are designed and tested.
+      I build backend services in Java &amp; Spring Boot, developer automation tools, and write candid engineering notes on how they are designed, tested, and evolved.
     </p>
     <div class="home-actions">
-      <a class="button" href="{{ "projects/" | relURL }}">View projects <span>→</span></a>
+      <a class="button" id="hero-projects-cta" href="{{ "projects/" | relURL }}">View projects <span>→</span></a>
+      <a class="button button--outline" id="hero-resume-cta" href="{{ "resume/" | relURL }}">Resume <span>→</span></a>
       {{- with .Site.Params.github }}
       <a class="text-link" href="{{ . }}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      {{- end }}
+      {{- with .Site.Params.linkedin }}
+      <a class="text-link" href="{{ . }}" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
       {{- end }}
       {{- with .Site.Params.email }}
       <a class="text-link" href="mailto:{{ . }}">Email ↗</a>
@@ -23,13 +27,14 @@
       <div>
         <h2>Selected projects</h2>
       </div>
-      <a href="{{ "projects/" | relURL }}">All projects ↗</a>
+      <a href="{{ "projects/" | relURL }}">Architecture &amp; details →</a>
     </div>
     <div class="project-grid">
       {{- range where . "featured" true }}
+      {{- $anchor := printf "projects/#%s" (.id | default (.name | urlize)) | relURL }}
       <article class="project-card">
         <div class="project-card__head">
-          <h3>{{ .name }}</h3>
+          <h3><a href="{{ $anchor }}">{{ .name }}</a></h3>
           {{- with .status }}
           <span class="project-status">{{ . }}</span>
           {{- end }}
@@ -43,8 +48,15 @@
         </div>
         {{- end }}
         <div class="project-links">
-          {{- with .post }}
-          <a href="{{ . | relURL }}">Write-up →</a>
+          <a href="{{ $anchor }}">Overview →</a>
+          {{- with .posts }}
+            {{- range first 1 . }}
+            <a href="{{ .url | relURL }}">{{ .label | default "Write-up" }} →</a>
+            {{- end }}
+          {{- else }}
+            {{- with .post }}
+            <a href="{{ . | relURL }}">Write-up →</a>
+            {{- end }}
           {{- end }}
           {{- with .repo }}
           <a href="{{ . }}" target="_blank" rel="noopener noreferrer">Source ↗</a>
@@ -61,7 +73,7 @@
       <div>
         <h2>Latest posts</h2>
       </div>
-      <a href="{{ "posts/" | relURL }}">All posts ↗</a>
+      <a href="{{ "posts/" | relURL }}">All posts →</a>
     </div>
     {{- range first 4 (where .Site.RegularPages "Section" "posts") }}
       {{ partial "post-row.html" . }}
