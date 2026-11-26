@@ -3,31 +3,73 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  {{- $title := .Site.Title }}
+  {{- $title := printf "%s · %s" .Site.Params.author .Site.Params.role }}
   {{- if not .IsHome }}
-    {{- $title = printf "%s · %s" .Title .Site.Title }}
+    {{- $title = printf "%s · %s" .Title .Site.Params.author }}
   {{- end }}
   {{- $description := .Description | default .Site.Params.description }}
+  {{- $isPost := and .IsPage (eq .Section "posts") }}
+  {{- $ogImage := (.Params.image | default .Site.Params.og_image) | absURL }}
   <title>{{ $title }}</title>
   <meta name="description" content="{{ $description }}">
+  <meta name="author" content="{{ .Site.Params.author }}">
   <link rel="canonical" href="{{ .Permalink }}">
 
   {{- /* Open Graph & Twitter Card */ -}}
   <meta property="og:title" content="{{ $title }}">
   <meta property="og:description" content="{{ $description }}">
-  <meta property="og:type" content="{{ if and .IsPage (eq .Section "posts") }}article{{ else }}website{{ end }}">
+  <meta property="og:type" content="{{ if $isPost }}article{{ else }}website{{ end }}">
   <meta property="og:url" content="{{ .Permalink }}">
-  <meta property="og:site_name" content="{{ .Site.Title }}">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:site_name" content="{{ .Site.Params.author }} · {{ .Site.Title }}">
+  <meta property="og:image" content="{{ $ogImage }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  {{- if $isPost }}
+  <meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+  <meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+  {{- range .Params.tags }}
+  <meta property="article:tag" content="{{ . }}">
+  {{- end }}
+  {{- end }}
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{ $title }}">
   <meta name="twitter:description" content="{{ $description }}">
+  <meta name="twitter:image" content="{{ $ogImage }}">
+
+  {{- /* JSON-LD Structured Data */ -}}
+  {{- if $isPost }}
+    {{- $ld := dict
+      "@context" "https://schema.org"
+      "@type" "BlogPosting"
+      "headline" .Title
+      "description" $description
+      "datePublished" (.Date.Format "2006-01-02T15:04:05Z07:00")
+      "dateModified" (.Lastmod.Format "2006-01-02T15:04:05Z07:00")
+      "url" .Permalink
+      "image" $ogImage
+      "author" (dict "@type" "Person" "name" .Site.Params.author "url" .Site.BaseURL)
+    }}
+  <script type="application/ld+json">{{ $ld | jsonify | safeJS }}</script>
+  {{- else if or .IsHome (eq .RelPermalink ("about/" | relURL)) (eq .RelPermalink ("resume/" | relURL)) }}
+    {{- $sameAs := slice }}
+    {{- with .Site.Params.github }}{{ $sameAs = $sameAs | append . }}{{ end }}
+    {{- with .Site.Params.linkedin }}{{ $sameAs = $sameAs | append . }}{{ end }}
+    {{- $ld := dict
+      "@context" "https://schema.org"
+      "@type" "Person"
+      "name" .Site.Params.author
+      "jobTitle" .Site.Params.role
+      "description" .Site.Params.description
+      "url" .Site.BaseURL
+      "sameAs" $sameAs
+    }}
+  <script type="application/ld+json">{{ $ld | jsonify | safeJS }}</script>
+  {{- end }}
 
   {{- $css := resources.Get "css/main.css" | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
   <link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
-  {{- with .OutputFormats.Get "rss" }}
-  <link rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }}" href="{{ .Permalink }}">
-  {{- end }}
+  <link rel="alternate" type="application/rss+xml" title="{{ .Site.Params.author }} · {{ .Site.Title }}" href="{{ "index.xml" | absURL }}">
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -40,7 +82,7 @@
         (dict "name" "Home" "path" "" "num" "01" "section" "")
         (dict "name" "Projects" "path" "projects/" "num" "02" "section" "projects")
         (dict "name" "Posts" "path" "posts/" "num" "03" "section" "posts")
-        (dict "name" "Archive" "path" "archives/" "num" "04" "section" "archives")
+        (dict "name" "Resume" "path" "resume/" "num" "04" "section" "resume")
         (dict "name" "About" "path" "about/" "num" "05" "section" "about")
       }}
       {{- range $nav }}
@@ -49,7 +91,7 @@
         {{- if eq .path "" }}
           {{- $active = $page.IsHome }}
         {{- else if eq .section "posts" }}
-          {{- $active = eq $page.Section "posts" }}
+          {{- $active = or (eq $page.Section "posts") (eq $page.Section "tags") (eq $page.Section "series") (eq $page.RelPermalink ("archives/" | relURL)) }}
         {{- else }}
           {{- $active = eq $page.RelPermalink $url }}
         {{- end }}
@@ -67,16 +109,23 @@
   <footer class="shell footer">
     <div>
       <a class="brand" href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}<span>/</span></a>
+      <p>{{ .Site.Params.author }} · {{ .Site.Params.role }}</p>
     </div>
     <div>
-      {{- with .Site.Params.email }}
-      <a href="mailto:{{ . }}">Email ↗</a>
-      {{- end }}
-      {{- with .Site.Params.github }}
-      <a href="{{ . }}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-      {{- end }}
-      <a href="{{ "index.xml" | relURL }}">RSS ↗</a>
-      <a href="{{ "tags/" | relURL }}">Tags →</a>
+      <div class="footer-links">
+        {{- with .Site.Params.email }}
+        <a href="mailto:{{ . }}">Email ↗</a>
+        {{- end }}
+        {{- with .Site.Params.github }}
+        <a href="{{ . }}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        {{- end }}
+        {{- with .Site.Params.linkedin }}
+        <a href="{{ . }}" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+        {{- end }}
+        <a href="{{ "index.xml" | relURL }}">RSS ↗</a>
+        <a href="{{ "archives/" | relURL }}">Archive →</a>
+        <a href="{{ "tags/" | relURL }}">Tags →</a>
+      </div>
       <p>© {{ now.Year }} {{ .Site.Params.author }} · Built with Hugo</p>
     </div>
   </footer>

@@ -1,0 +1,31 @@
+summary: >-
+  Backend / Java software engineer focused on building maintainable Spring Boot services,
+  clean HTTP/database boundaries, automated container-backed testing, and pragmatic developer tooling.
+  Every project is documented with explicit trade-offs, failure modes, and iterative milestones.
+
+skills:
+  - group: Backend
+    items: Java 21, Spring Boot, Spring Data JPA / Hibernate, REST API Design, Bean Validation, RFC 9457 ProblemDetail
+  - group: Data & Testing
+    items: PostgreSQL, Relational Schema Modeling, Testcontainers, JUnit 5, Integration Testing
+  - group: Tooling & CI/CD
+    items: Git, Docker & Compose, GitHub Actions, Maven, Bash Scripting, macOS launchd / Linux CLI
+  - group: Languages
+    items: Chinese (Native), English (Working Proficiency — all code & technical writing), German (Actively Learning)
+
+# Uncomment and fill in work experience when ready; layouts/resume.html renders this section automatically:
+# experience:
+#   - role: Backend Software Engineer
+#     company: Company Name
+#     location: City / Remote
+#     period: 2024 – Present
+#     bullets:
+#       - Designed and maintained Java / Spring Boot microservices...
+#       - Improved PostgreSQL query latency and automated CI test coverage...
+
+# Uncomment and fill in education when ready; layouts/resume.html renders this section automatically:
+# education:
+#   - degree: B.Sc. in Computer Science
+#     school: University Name
+#     period: 2020 – 2024
+#     details: Relevant coursework or honors

@@ -1,9 +1,12 @@
 {{ define "main" }}
   <div class="page-heading">
+    <div class="eyebrow">404</div>
     <h1>Page not found</h1>
     <p>The page you requested does not exist or may have moved.</p>
     <div class="home-actions">
       <a class="button" href="{{ .Site.Home.RelPermalink }}">Back home <span>→</span></a>
+      <a class="text-link" href="{{ "projects/" | relURL }}">Projects →</a>
+      <a class="text-link" href="{{ "posts/" | relURL }}">Posts →</a>
     </div>
   </div>
 {{ end }}

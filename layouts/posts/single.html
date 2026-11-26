@@ -1,6 +1,9 @@
 {{ define "main" }}
   <a class="back" href="{{ "posts/" | relURL }}">← All posts</a>
 
+  {{- $current := . }}
+  {{- $hasToc := gt (len .TableOfContents) 32 }}
+
   <article>
     <header class="page-heading">
       <div class="tags">
@@ -12,12 +15,54 @@
       {{- with .Description }}
       <p>{{ . }}</p>
       {{- end }}
-      <div class="eyebrow">{{ .Date.Format "2006.01.02" }} · {{ .Site.Params.author }} · {{ .ReadingTime }} min read</div>
+      <div class="eyebrow">
+        {{ .Date.Format "2006.01.02" }}
+        {{- if ne (.Lastmod.Format "2006-01-02") (.Date.Format "2006-01-02") }} · Updated {{ .Lastmod.Format "2006.01.02" }}{{ end }}
+        · {{ .Site.Params.author }} · {{ .ReadingTime }} min read
+      </div>
     </header>
 
-    <div class="reading-layout">
-      <div class="prose">{{ .Content }}</div>
-      {{- if gt (len .TableOfContents) 32 }}
+    <div class="reading-layout{{ if not $hasToc }} reading-layout--single{{ end }}">
+      <div class="prose">
+        {{- range .GetTerms "series" }}
+        <nav class="series-box" aria-label="Article series: {{ .LinkTitle }}">
+          <div class="series-box__head">
+            <span class="eyebrow">Series · <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></span>
+            <span class="series-box__count">{{ len .Pages }} {{ if eq (len .Pages) 1 }}part{{ else }}parts{{ end }}</span>
+          </div>
+          <ol class="series-box__list">
+            {{- range $idx, $p := .Pages.ByDate }}
+            <li{{ if eq $p.RelPermalink $current.RelPermalink }} aria-current="page"{{ end }}>
+              <span class="series-box__num">{{ printf "%02d" (add $idx 1) }}</span>
+              {{- if eq $p.RelPermalink $current.RelPermalink }}
+              <strong>{{ $p.Title }}</strong>
+              {{- else }}
+              <a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a>
+              {{- end }}
+            </li>
+            {{- end }}
+          </ol>
+        </nav>
+        {{- end }}
+
+        {{ .Content }}
+
+        <aside class="post-author" aria-label="About the author">
+          <div>
+            <strong>{{ .Site.Params.author }}</strong> · {{ .Site.Params.role }}
+            <p>Building backend services in Java &amp; Spring Boot and documenting real engineering trade-offs.</p>
+          </div>
+          <div class="post-author__links">
+            <a href="{{ "projects/" | relURL }}">Projects →</a>
+            <a href="{{ "resume/" | relURL }}">Resume →</a>
+            {{- with .Site.Params.github }}
+            <a href="{{ . }}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+            {{- end }}
+          </div>
+        </aside>
+      </div>
+
+      {{- if $hasToc }}
       <aside class="toc">
         <span class="eyebrow">On this page</span>
         {{ .TableOfContents }}
@@ -26,35 +71,57 @@
     </div>
   </article>
 
+  {{- if or .PrevInSection .NextInSection }}
   <nav class="post-navigation" aria-label="Adjacent posts">
-    {{- with .PrevInSection }}
-    <a href="{{ .RelPermalink }}">← {{ .Title }}</a>
-    {{- end }}
-    {{- with .NextInSection }}
-    <a href="{{ .RelPermalink }}">{{ .Title }} →</a>
-    {{- end }}
+    <div class="post-navigation__prev">
+      {{- with .PrevInSection }}
+      <a href="{{ .RelPermalink }}">
+        <span class="eyebrow">← Older post</span>
+        <span>{{ .Title }}</span>
+      </a>
+      {{- end }}
+    </div>
+    <div class="post-navigation__next">
+      {{- with .NextInSection }}
+      <a href="{{ .RelPermalink }}">
+        <span class="eyebrow">Newer post →</span>
+        <span>{{ .Title }}</span>
+      </a>
+      {{- end }}
+    </div>
   </nav>
+  {{- end }}
 
   <script>
-    document.querySelectorAll('.prose pre').forEach(function (pre) {
-      var wrap = document.createElement('div');
-      wrap.className = 'code-wrap';
-      pre.parentNode.insertBefore(wrap, pre);
-      wrap.appendChild(pre);
-
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'copy-btn';
-      btn.textContent = 'Copy';
+    document.querySelectorAll('[data-copy-code]').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        var code = pre.querySelector('code');
-        var text = code ? code.innerText : pre.innerText;
-        navigator.clipboard.writeText(text).then(function () {
+        var block = btn.closest('.code-block');
+        var code = block && block.querySelector('pre code');
+        if (!code || !navigator.clipboard) return;
+        navigator.clipboard.writeText(code.innerText).then(function () {
           btn.textContent = 'Copied';
           setTimeout(function () { btn.textContent = 'Copy'; }, 1500);
-        });
+        }).catch(function () {});
       });
-      wrap.appendChild(btn);
     });
   </script>
+  {{- if .Store.Get "hasMermaid" }}
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        background: '#e8e7df',
+        primaryColor: '#f5f4ee',
+        primaryTextColor: '#171814',
+        primaryBorderColor: '#171814',
+        lineColor: '#276482',
+        secondaryColor: '#e3e1d8',
+        tertiaryColor: '#f2f0e9',
+        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace'
+      }
+    });
+  </script>
+  {{- end }}
 {{ end }}

@@ -1,0 +1,144 @@
+{{ define "main" }}
+  {{- $resume := hugo.Data.resume }}
+  <div class="page-heading resume-toolbar">
+    <div>
+      <div class="eyebrow">Curriculum Vitae</div>
+      <h1>{{ .Title }}</h1>
+      {{- with .Description }}
+      <p>{{ . }}</p>
+      {{- end }}
+    </div>
+    <div class="resume-toolbar__actions">
+      {{- with .Site.Params.resume_pdf }}
+      <a class="button" id="resume-download-btn" href="{{ . | relURL }}" target="_blank" rel="noopener noreferrer">Download PDF <span>↗</span></a>
+      {{- end }}
+      <button type="button" class="button" id="resume-print-btn" onclick="window.print()">Print / Save PDF <span>→</span></button>
+    </div>
+  </div>
+
+  <article class="resume-sheet">
+    <header class="resume-header">
+      <div>
+        <h2 class="resume-name">{{ .Site.Params.author }}</h2>
+        <div class="resume-role">{{ .Site.Params.role }}{{ with .Site.Params.location }} · {{ . }}{{ end }}</div>
+      </div>
+      <div class="resume-contact">
+        {{- with .Site.Params.email }}
+        <a href="mailto:{{ . }}">{{ . }}</a>
+        {{- end }}
+        {{- with .Site.Params.github }}
+        <a href="{{ . }}" target="_blank" rel="noopener noreferrer">{{ replace . "https://" "" }}</a>
+        {{- end }}
+        {{- with .Site.Params.linkedin }}
+        <a href="{{ . }}" target="_blank" rel="noopener noreferrer">{{ replace (replace . "https://www." "") "https://" "" }}</a>
+        {{- end }}
+        <a href="{{ .Site.BaseURL }}">{{ strings.TrimSuffix "/" (replace .Site.BaseURL "https://" "") }}</a>
+      </div>
+    </header>
+
+    {{- with $resume.summary }}
+    <section class="resume-section">
+      <h3 class="resume-section__title">Summary</h3>
+      <p class="resume-summary">{{ . }}</p>
+    </section>
+    {{- end }}
+
+    {{- with $resume.skills }}
+    <section class="resume-section">
+      <h3 class="resume-section__title">Technical Skills</h3>
+      <dl class="resume-skills">
+        {{- range . }}
+        <div class="resume-skills__row">
+          <dt>{{ .group }}</dt>
+          <dd>{{ .items }}</dd>
+        </div>
+        {{- end }}
+      </dl>
+    </section>
+    {{- end }}
+
+    {{- with $resume.experience }}
+    <section class="resume-section">
+      <h3 class="resume-section__title">Experience</h3>
+      {{- range . }}
+      <div class="resume-entry">
+        <div class="resume-entry__head">
+          <div>
+            <strong>{{ .role }}</strong> · {{ .company }}{{ with .location }} ({{ . }}){{ end }}
+          </div>
+          <span class="resume-entry__meta">{{ .period }}</span>
+        </div>
+        {{- with .bullets }}
+        <ul class="resume-bullets">
+          {{- range . }}
+          <li>{{ . | markdownify }}</li>
+          {{- end }}
+        </ul>
+        {{- end }}
+      </div>
+      {{- end }}
+    </section>
+    {{- end }}
+
+    {{- with hugo.Data.projects }}
+    <section class="resume-section">
+      <h3 class="resume-section__title">Selected Engineering Projects</h3>
+      {{- range . }}
+      <div class="resume-entry">
+        <div class="resume-entry__head">
+          <div>
+            <strong>{{ .name }}</strong>
+            {{- with .stack }}
+            <span class="resume-stack"> · {{ delimit . ", " }}</span>
+            {{- end }}
+          </div>
+          <span class="resume-entry__meta">
+            {{- with .repo }}<a href="{{ . }}" target="_blank" rel="noopener noreferrer">{{ replace . "https://" "" }}</a>{{ end -}}
+          </span>
+        </div>
+        <p class="resume-entry__tagline">{{ .tagline }}</p>
+        {{- with .highlights }}
+        <ul class="resume-bullets">
+          {{- range . }}
+          <li>{{ . | markdownify }}</li>
+          {{- end }}
+        </ul>
+        {{- end }}
+      </div>
+      {{- end }}
+    </section>
+    {{- end }}
+
+    {{- with $resume.education }}
+    <section class="resume-section">
+      <h3 class="resume-section__title">Education</h3>
+      {{- range . }}
+      <div class="resume-entry">
+        <div class="resume-entry__head">
+          <div><strong>{{ .degree }}</strong> · {{ .school }}</div>
+          <span class="resume-entry__meta">{{ .period }}</span>
+        </div>
+        {{- with .details }}
+        <p class="resume-entry__tagline">{{ . }}</p>
+        {{- end }}
+      </div>
+      {{- end }}
+    </section>
+    {{- end }}
+
+    {{- $posts := first 5 (where .Site.RegularPages "Section" "posts") }}
+    {{- if gt (len $posts) 0 }}
+    <section class="resume-section">
+      <h3 class="resume-section__title">Selected Technical Writing</h3>
+      <ul class="resume-writing">
+        {{- range $posts }}
+        <li>
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          <span>{{ .Date.Format "2006.01" }}</span>
+        </li>
+        {{- end }}
+      </ul>
+    </section>
+    {{- end }}
+  </article>
+{{ end }}

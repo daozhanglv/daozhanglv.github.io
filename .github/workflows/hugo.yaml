@@ -2,13 +2,15 @@ name: Build and deploy Hugo
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
   pages: write
   id-token: write
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: false
 env:
   HUGO_VERSION: 0.167.0
@@ -19,6 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Setup Pages
+        if: github.event_name != 'pull_request'
         id: pages
         uses: actions/configure-pages@v6
       - name: Install Hugo
@@ -28,11 +31,63 @@ jobs:
           tar -xzf "$RUNNER_TEMP/hugo.tar.gz" -C "$RUNNER_TEMP/hugo-bin"
           echo "$RUNNER_TEMP/hugo-bin" >> "$GITHUB_PATH"
       - name: Build
-        run: hugo --gc --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
+        run: |
+          BASE_URL="${{ steps.pages.outputs.base_url }}"
+          if [ -n "$BASE_URL" ]; then
+            hugo --gc --minify --baseURL "${BASE_URL}/"
+          else
+            hugo --gc --minify
+          fi
+      - name: Verify internal links and RSS feed
+        run: |
+          python3 - << 'EOF'
+          import pathlib, re, sys, xml.etree.ElementTree as ET
+          from html.parser import HTMLParser
+          from urllib.parse import unquote, urlparse
+
+          pub = pathlib.Path("public")
+          rss = pub / "index.xml"
+          tree = ET.parse(rss)
+          for pub_date in tree.findall(".//item/pubDate"):
+              if "0001" in (pub_date.text or ""):
+                  sys.exit(f"Invalid pubDate in RSS: {pub_date.text}")
+
+          class LinkCheck(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.refs = []
+              def handle_starttag(self, tag, attrs):
+                  for k, v in attrs:
+                      if k in ("href", "src") and v:
+                          self.refs.append(v)
+
+          errors = []
+          for html_file in pub.rglob("*.html"):
+              p = LinkCheck()
+              p.feed(html_file.read_text(encoding="utf-8"))
+              for ref in p.refs:
+                  if ref.startswith(("http://", "https://", "mailto:", "tel:", "javascript:", "data:", "#")):
+                      continue
+                  parsed = urlparse(ref)
+                  rel_path = unquote(parsed.path)
+                  if not rel_path:
+                      continue
+                  target = (pub / rel_path.lstrip("/")) if rel_path.startswith("/") else (html_file.parent / rel_path)
+                  if target.is_dir():
+                      target = target / "index.html"
+                  if not target.exists():
+                      errors.append(f"{html_file}: broken ref -> {ref}")
+
+          if errors:
+              sys.exit("\n".join(errors))
+          print("Verified all internal HTML links/assets and RSS items.")
+          EOF
       - uses: actions/upload-pages-artifact@v5
+        if: github.event_name != 'pull_request'
         with:
           path: public
   deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     environment:

@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 216" role="img" aria-labelledby="ws-title ws-desc">
+  <title id="ws-title">WortSchatz Backend Architecture</title>
+  <desc id="ws-desc">Request flow from REST controllers using Java records and Bean Validation through domain services and Spring Data JPA into PostgreSQL 17, backed by ProblemDetail error handling and Testcontainers CI.</desc>
+  <style>
+    .bg { fill: #ebe9e1; stroke: #c7c6bc; stroke-width: 1; }
+    .box { fill: #f5f4ee; stroke: #171814; stroke-width: 1; }
+    .box-accent { fill: #f5f4ee; stroke: #276482; stroke-width: 1.5; }
+    .bar { fill: #e3e1d8; stroke: #c7c6bc; stroke-width: 1; }
+    .eyebrow { font: 600 9.5px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #276482; letter-spacing: 0.9px; }
+    .title { font: 700 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #171814; }
+    .meta { font: 400 10.5px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #595a54; }
+    .arrow { stroke: #171814; stroke-width: 1.2; fill: none; }
+    .arrow-head { fill: #171814; }
+  </style>
+
+  <rect class="bg" x="0.5" y="0.5" width="719" height="215"/>
+
+  <!-- Stage 1: HTTP Boundary -->
+  <rect class="box" x="18" y="20" width="148" height="106"/>
+  <text class="eyebrow" x="30" y="40">01 · HTTP BOUNDARY</text>
+  <text class="title" x="30" y="61">REST Controllers</text>
+  <text class="meta" x="30" y="82">/api/words · /articles</text>
+  <text class="meta" x="30" y="99">Java record DTOs</text>
+  <text class="meta" x="30" y="115">Bean Validation</text>
+
+  <line class="arrow" x1="166" y1="73" x2="188" y2="73"/>
+  <polygon class="arrow-head" points="193,73 186,69.5 186,76.5"/>
+
+  <!-- Stage 2: Service Layer -->
+  <rect class="box" x="195" y="20" width="148" height="106"/>
+  <text class="eyebrow" x="207" y="40">02 · APPLICATION</text>
+  <text class="title" x="207" y="61">Domain Services</text>
+  <text class="meta" x="207" y="82">DTO ↔ Entity mapping</text>
+  <text class="meta" x="207" y="99">No entity leak on API</text>
+  <text class="meta" x="207" y="115">Grammar rules check</text>
+
+  <line class="arrow" x1="343" y1="73" x2="365" y2="73"/>
+  <polygon class="arrow-head" points="370,73 363,69.5 363,76.5"/>
+
+  <!-- Stage 3: Persistence -->
+  <rect class="box" x="372" y="20" width="148" height="106"/>
+  <text class="eyebrow" x="384" y="40">03 · PERSISTENCE</text>
+  <text class="title" x="384" y="61">Spring Data JPA</text>
+  <text class="meta" x="384" y="82">Word &amp; Article</text>
+  <text class="meta" x="384" y="99">@Enumerated(STRING)</text>
+  <text class="meta" x="384" y="115">FetchType.LAZY</text>
+
+  <line class="arrow" x1="520" y1="73" x2="542" y2="73"/>
+  <polygon class="arrow-head" points="547,73 540,69.5 540,76.5"/>
+
+  <!-- Stage 4: Database -->
+  <rect class="box-accent" x="549" y="20" width="153" height="106"/>
+  <text class="eyebrow" x="561" y="40">04 · DATA STORE</text>
+  <text class="title" x="561" y="61">PostgreSQL 17</text>
+  <text class="meta" x="561" y="82">Gender / plural model</text>
+  <text class="meta" x="561" y="99">Source article FK</text>
+  <text class="meta" x="561" y="115">Docker Compose dev</text>
+
+  <!-- Cross-cutting bars -->
+  <rect class="bar" x="18" y="142" width="332" height="56"/>
+  <text class="eyebrow" x="30" y="161">ERROR CONTRACT</text>
+  <text class="meta" x="30" y="181">GlobalExceptionHandler → RFC 9457 ProblemDetail</text>
+
+  <rect class="bar" x="366" y="142" width="336" height="56"/>
+  <text class="eyebrow" x="378" y="161">AUTOMATED VERIFICATION</text>
+  <text class="meta" x="378" y="181">Testcontainers postgres:17 + GitHub Actions CI</text>
+</svg>

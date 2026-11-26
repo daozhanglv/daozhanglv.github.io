@@ -1,6 +1,14 @@
 {{ define "main" }}
   <div class="page-heading">
-    <h1>Archive</h1>
+    <div class="eyebrow">Writing</div>
+    <h1>{{ .Title | default "Archive" }}</h1>
+    {{- with .Description }}
+    <p>{{ . }}</p>
+    {{- end }}
+    <div class="subnav">
+      <a class="text-link" href="{{ "posts/" | relURL }}">← All posts</a>
+      <a class="text-link" href="{{ "tags/" | relURL }}">Browse tags →</a>
+    </div>
   </div>
 
   {{- range (where .Site.RegularPages "Section" "posts").GroupByDate "2006" }}
@@ -9,9 +17,9 @@
     <div>
       {{- range .Pages }}
       <a href="{{ .RelPermalink }}">
-        <time>{{ .Date.Format "01.02" }}</time>
+        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "01.02" }}</time>
         <span>{{ .Title }}</span>
-        <span>↗</span>
+        <span>→</span>
       </a>
       {{- end }}
     </div>

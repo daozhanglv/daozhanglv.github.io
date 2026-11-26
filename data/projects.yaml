@@ -1,4 +1,5 @@
-- name: WortSchatz
+- id: wortschatz
+  name: WortSchatz
   tagline: A German vocabulary trainer backend that extracts candidate words from real articles and schedules reviews with spaced repetition.
   status: In Progress
   featured: true
@@ -8,14 +9,20 @@
     - PostgreSQL 17
     - Testcontainers
     - GitHub Actions
+  diagram: /diagrams/wortschatz-arch.svg
+  diagram_alt: Layered Spring Boot architecture from REST controllers with Java record DTOs through domain services and JPA into PostgreSQL 17, verified with Testcontainers in GitHub Actions.
   highlights:
-    - Decoupled HTTP contracts (Java records + Bean Validation + ProblemDetail) from JPA persistence entities.
-    - Modeled domain-specific German grammar attributes (part of speech, grammatical gender, plural forms, source sentence).
-    - End-to-end integration tests running against a real PostgreSQL container on every push via GitHub Actions.
+    - Decoupled HTTP contracts (Java records + Bean Validation + RFC 9457 `ProblemDetail`) from JPA persistence entities to prevent lazy-loading leaks.
+    - Modeled domain-specific German grammar attributes (`@Enumerated(STRING)` part of speech, grammatical gender, plural forms, and source article context).
+    - End-to-end integration tests running against a real `postgres:17` Testcontainers instance on every push via GitHub Actions.
   repo: https://github.com/daozhanglv/wortschatz
-  post: /posts/wortschatz-1-data-foundation/
+  series: /series/wortschatz/
+  posts:
+    - label: "Part 1: Data foundation"
+      url: /posts/wortschatz-1-data-foundation/
 
-- name: mac-autosync
+- id: mac-autosync
+  name: mac-autosync
   tagline: Zero-touch nightly Mac config and Homebrew backup to a private Git repo with two-layer secret prevention.
   status: Active
   featured: true
@@ -24,9 +31,13 @@
     - macOS launchd
     - gitleaks
     - Homebrew
+  diagram: /diagrams/mac-autosync-arch.svg
+  diagram_alt: Nightly launchd pipeline running Bash 3.2 scripts to snapshot dotfiles and Brewfile, enforce path denylist and gitleaks staged scan, and push to a private Git repository.
   highlights:
-    - Written in plain Bash 3.2 (~400 lines) with no extra runtime, compatible with a fresh macOS install.
-    - Two-layer secret blocking combining a hard-coded sensitive path denylist and pre-commit gitleaks scanning.
-    - One-command restore flow (`install.sh --restore`) for dotfiles and Homebrew packages on a new machine.
+    - Written in portable Bash 3.2 (~400 lines) with no background daemon or extra runtime, compatible with a clean macOS install.
+    - Two-layer pre-commit secret blocking combining a hard-coded sensitive path denylist and staged `gitleaks` scanning so secrets never enter Git history.
+    - Safe dry-run check (`install.sh --check`) and one-command restore flow (`install.sh --restore` with `.bak` preservation) for setting up a new Mac.
   repo: https://github.com/daozhanglv/mac-autosync
-  post: /posts/mac-autosync/
+  posts:
+    - label: Design write-up
+      url: /posts/mac-autosync/

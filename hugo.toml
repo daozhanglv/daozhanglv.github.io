@@ -5,21 +5,36 @@ title = 'missing'
 titleCaseStyle = 'none'
 hasCJKLanguage = false
 enableRobotsTXT = true
+
 [pagination]
   pagerSize = 8
+
 [params]
   author = 'daozhanglv'
   role = 'Backend / Java Software Engineer'
-  description = 'Backend & Java software engineer. Selected projects, system design notes, and engineering write-ups.'
+  headline = 'Backend & Java Software Engineer'
+  status = 'Open to Backend / Java Software Engineer roles'
+  description = 'Backend & Java software engineer building reliable Spring Boot services, developer tooling, and candid engineering write-ups.'
+  languages = 'Chinese (Native) · English (Working) · German (Learning)'
   github = 'https://github.com/daozhanglv'
   email = 'boki1982014612@gmail.com'
+  linkedin = ''
+  location = ''
+  resume_pdf = ''
+  og_image = 'og-card.png'
+  mainSections = ['posts']
+
 [taxonomies]
   tag = 'tags'
+  series = 'series'
+
 [markup.goldmark.renderer]
   unsafe = false
+
 [markup.highlight]
-  style = 'github'
+  noClasses = false
   lineNos = false
+
 [markup.tableOfContents]
   startLevel = 2
   endLevel = 3

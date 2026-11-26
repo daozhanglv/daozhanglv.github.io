@@ -1,8 +1,24 @@
 {{ define "main" }}
   <div class="page-heading">
+    {{- if eq .Section "series" }}
+    <div class="eyebrow">{{ if eq .Kind "taxonomy" }}All Series{{ else }}Series{{ end }}</div>
+    {{- else if eq .Section "tags" }}
+    <div class="eyebrow">{{ if eq .Kind "taxonomy" }}All Tags{{ else }}Tag{{ end }}</div>
+    {{- else if eq .Section "posts" }}
+    <div class="eyebrow">Writing</div>
+    {{- end }}
     <h1>{{ .Title }}</h1>
     {{- with .Description }}
     <p>{{ . }}</p>
+    {{- end }}
+    {{- if eq .RelPermalink ("posts/" | relURL) }}
+    <div class="subnav">
+      <a class="text-link" href="{{ "archives/" | relURL }}">Archive by year →</a>
+      <a class="text-link" href="{{ "tags/" | relURL }}">Browse tags →</a>
+      {{- if gt (len .Site.Taxonomies.series) 0 }}
+      <a class="text-link" href="{{ "series/" | relURL }}">Project series →</a>
+      {{- end }}
+    </div>
     {{- end }}
   </div>
 
@@ -12,6 +28,10 @@
     <a href="{{ .Page.RelPermalink }}">{{ .Page.Title }} <small>{{ .Count }}</small></a>
     {{- end }}
   </div>
+  {{- else if and (eq .Kind "term") (eq .Section "series") }}
+    {{- range .Pages.ByDate }}
+      {{ partial "post-row.html" . }}
+    {{- end }}
   {{- else }}
     {{- $pager := .Paginate .Pages }}
     {{- range $pager.Pages }}
@@ -19,13 +39,17 @@
     {{- end }}
     {{- if gt $pager.TotalPages 1 }}
     <nav class="pagination" aria-label="Pagination">
-      {{- with $pager.Prev }}
-      <a href="{{ .URL }}">← Previous</a>
-      {{- end }}
+      <div>
+        {{- with $pager.Prev }}
+        <a href="{{ .URL }}">← Previous</a>
+        {{- end }}
+      </div>
       <span>{{ $pager.PageNumber }} / {{ $pager.TotalPages }}</span>
-      {{- with $pager.Next }}
-      <a href="{{ .URL }}">Next →</a>
-      {{- end }}
+      <div class="pagination__next">
+        {{- with $pager.Next }}
+        <a href="{{ .URL }}">Next →</a>
+        {{- end }}
+      </div>
     </nav>
     {{- end }}
   {{- end }}
